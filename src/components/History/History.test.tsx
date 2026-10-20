@@ -4,17 +4,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import History from './History';
 import { makeCalculationResponse } from '../../test-utils/fixtures';
-
-const OP_SYMBOLS: Record<string, string> = {
-  add: '+',
-  sub: '-',
-  mul: '×',
-  div: '÷',
-};
-
-function operationSymbol(op: string): string {
-  return OP_SYMBOLS[op] ?? op;
-}
+import { operationSymbol } from '../Calculator/useCalculator';
 
 describe('History - empty state', () => {
   it('renders "No calculations yet." when history is empty', () => {

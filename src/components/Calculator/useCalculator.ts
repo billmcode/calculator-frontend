@@ -18,6 +18,10 @@ const OP_SYMBOLS: Record<string, string> = {
   div: '÷',
 };
 
+export function operationSymbol(op: string): string {
+  return OP_SYMBOLS[op] || op;
+}
+
 const KEY_SYMBOLS: Record<string, string> = {
   '+': '+',
   '-': '−',
@@ -142,8 +146,6 @@ export function useCalculator() {
     operatorRef.current = null;
     waitingForOperandRef.current = false;
   }, []);
-
-  const operationSymbol = useCallback((op: string): string => OP_SYMBOLS[op] || op, []);
 
   const deleteFromHistory = useCallback(
     (id: number) => {
