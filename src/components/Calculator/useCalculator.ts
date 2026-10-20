@@ -147,7 +147,12 @@ export function useCalculator() {
 
   const deleteFromHistory = useCallback(
     (id: number) => {
-      calculatorApi.deleteCalculation(id).then(() => loadHistory());
+      calculatorApi.deleteCalculation(id).then(
+        () => loadHistory(),
+        (err: unknown) => {
+          setError(err instanceof Error ? err.message : 'Calculation failed');
+        },
+      );
     },
     [loadHistory],
   );

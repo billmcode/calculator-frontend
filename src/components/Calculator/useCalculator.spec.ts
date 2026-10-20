@@ -284,6 +284,36 @@ describe('useCalculator - delete then refetch', () => {
     await waitFor(() => expect(mockedApi.getHistory).toHaveBeenCalledTimes(2));
     await waitFor(() => expect(result.current.history).toEqual(afterDelete));
   });
+
+  it('sets error state when delete fails and does not refetch history', async () => {
+    mockedApi.deleteCalculation.mockRejectedValue(new Error('Calculation not found'));
+
+    const { result } = renderHook(() => useCalculator());
+    await waitFor(() => expect(mockedApi.getHistory).toHaveBeenCalledTimes(1));
+
+    await act(async () => {
+      result.current.deleteFromHistory(5);
+      await Promise.resolve();
+    });
+
+    await waitFor(() => expect(result.current.error).toBe('Calculation not found'));
+    expect(mockedApi.getHistory).toHaveBeenCalledTimes(1);
+  });
+
+  it('falls back to a generic message when delete fails with a non-Error rejection', async () => {
+    mockedApi.deleteCalculation.mockRejectedValue('network exploded');
+
+    const { result } = renderHook(() => useCalculator());
+    await waitFor(() => expect(mockedApi.getHistory).toHaveBeenCalledTimes(1));
+
+    await act(async () => {
+      result.current.deleteFromHistory(5);
+      await Promise.resolve();
+    });
+
+    await waitFor(() => expect(result.current.error).toBe('Calculation failed'));
+    expect(mockedApi.getHistory).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('useCalculator - operationSymbol', () => {
