@@ -1,0 +1,115 @@
+/* Ported from src/app/app.css (calculator-related rules only). */
+
+.calculator {
+  background: #1c1c1e;
+  border-radius: 16px;
+  padding: 1.5rem;
+  width: 320px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.display {
+  background: #2c2c2e;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  text-align: right;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.display .expression {
+  font-size: 0.9rem;
+  color: #8e8e93;
+  min-height: 1.2em;
+  word-break: break-all;
+}
+
+.display .result {
+  font-size: 2.25rem;
+  font-weight: 300;
+  color: #fff;
+  word-break: break-all;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.btn {
+  border: none;
+  border-radius: 12px;
+  font-size: 1.25rem;
+  padding: 0;
+  height: 56px;
+  cursor: pointer;
+  background: #3a3a3c;
+  color: #fff;
+  transition: background 0.15s;
+  font-family: inherit;
+}
+
+.btn:hover {
+  background: #48484a;
+}
+
+.btn:active {
+  background: #636366;
+}
+
+.btn.operator {
+  background: #ff9f0a;
+  color: #1c1c1e;
+  font-weight: 600;
+}
+
+.btn.operator:hover {
+  background: #ffb340;
+}
+
+.btn.operator:active {
+  background: #ffc766;
+}
+
+.btn.clear {
+  background: #636366;
+  color: #fff;
+  font-weight: 600;
+}
+
+.btn.clear:hover {
+  background: #8e8e93;
+}
+
+.btn.zero {
+  grid-column: span 2;
+}
+
+.btn.equals {
+  background: #30d158;
+  color: #1c1c1e;
+  font-weight: 600;
+}
+
+.btn.equals:hover {
+  background: #4bda6e;
+}
+
+.btn.equals:active {
+  background: #66e085;
+}
+
+.error {
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: #ff453a22;
+  border: 1px solid #ff453a;
+  border-radius: 8px;
+  color: #ff453a;
+  font-size: 0.85rem;
+  text-align: center;
+}

@@ -1,0 +1,16 @@
+/* Global reset/base styles for the Vite/React tree, mirroring src/styles.css
+   (owned by Angular's src/index.html - left untouched). Imported once from
+   src/main.tsx. */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: #000;
+  color: #fff;
+  min-height: 100vh;
+}
