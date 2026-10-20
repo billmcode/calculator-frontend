@@ -23,5 +23,15 @@ export default defineConfig({
   },
   server: {
     open: '/index.vite.html',
+    proxy: {
+      // Mirrors proxy.conf.json (used by `ng serve`) so `/api` behaves the
+      // same way under both toolchains during the migration.
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
   },
 });
