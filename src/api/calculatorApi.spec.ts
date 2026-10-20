@@ -115,4 +115,12 @@ describe('calculatorApi - error handling', () => {
 
     await expect(deleteCalculation(1)).rejects.toMatchObject({ message: 'Calculation failed' });
   });
+
+  it('falls back to "Calculation failed" when fetch itself rejects (network/transport failure)', async () => {
+    fetchMock.mockRejectedValue(new TypeError('Failed to fetch'));
+
+    await expect(add(1, 2)).rejects.toMatchObject({ message: 'Calculation failed' });
+    fetchMock.mockRejectedValue(new TypeError('Failed to fetch'));
+    await expect(add(1, 2)).rejects.toBeInstanceOf(ApiError);
+  });
 });

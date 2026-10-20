@@ -45,8 +45,22 @@ async function throwApiError(response: Response): Promise<never> {
   throw new ApiError(response.status, detail);
 }
 
+// fetch() rejects (rather than resolving with a non-ok Response) for
+// network/transport-level failures: backend unreachable, DNS failure,
+// CORS block, etc. Angular's HttpErrorResponse.error is a ProgressEvent
+// (no `.detail`) in this case, so origin always fell back to the generic
+// message here. Wrap the same way as a non-2xx response so callers never
+// see a raw browser/network Error - they only ever see ApiError/.message.
+async function safeFetch(input: RequestInfo, init?: RequestInit): Promise<Response> {
+  try {
+    return await (init === undefined ? fetch(input) : fetch(input, init));
+  } catch {
+    throw new ApiError(0, undefined);
+  }
+}
+
 async function calculate(operation: string, a: number, b: number): Promise<ResultResponse> {
-  const response = await fetch(`${baseUrl}/calculations`, {
+  const response = await safeFetch(`${baseUrl}/calculations`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ operation, a, b }),
@@ -77,7 +91,7 @@ export function divide(a: number, b: number): Promise<ResultResponse> {
 }
 
 export async function getHistory(): Promise<CalculationResponse[]> {
-  const response = await fetch(`${baseUrl}/calculations`);
+  const response = await safeFetch(`${baseUrl}/calculations`);
 
   if (!response.ok) {
     await throwApiError(response);
@@ -87,7 +101,7 @@ export async function getHistory(): Promise<CalculationResponse[]> {
 }
 
 export async function deleteCalculation(id: number): Promise<void> {
-  const response = await fetch(`${baseUrl}/calculations/${id}`, {
+  const response = await safeFetch(`${baseUrl}/calculations/${id}`, {
     method: 'DELETE',
   });
 
