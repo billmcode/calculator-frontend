@@ -3,7 +3,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import History from './History';
-import type { CalculationResponse } from '../../types/calculator';
+import { makeCalculationResponse } from '../../test-utils/fixtures';
 
 const OP_SYMBOLS: Record<string, string> = {
   add: '+',
@@ -16,18 +16,6 @@ function operationSymbol(op: string): string {
   return OP_SYMBOLS[op] ?? op;
 }
 
-function makeItem(overrides: Partial<CalculationResponse> = {}): CalculationResponse {
-  return {
-    id: 1,
-    operation: 'add',
-    a: 1,
-    b: 2,
-    result: 3,
-    created_at: '2024-01-01T00:00:00Z',
-    ...overrides,
-  };
-}
-
 describe('History - empty state', () => {
   it('renders "No calculations yet." when history is empty', () => {
     render(<History history={[]} operationSymbol={operationSymbol} onDelete={vi.fn()} />);
@@ -37,7 +25,7 @@ describe('History - empty state', () => {
 
   it('does not render the empty message when history has items', () => {
     render(
-      <History history={[makeItem()]} operationSymbol={operationSymbol} onDelete={vi.fn()} />,
+      <History history={[makeCalculationResponse()]} operationSymbol={operationSymbol} onDelete={vi.fn()} />,
     );
 
     expect(screen.queryByText('No calculations yet.')).not.toBeInTheDocument();
@@ -47,8 +35,8 @@ describe('History - empty state', () => {
 describe('History - populated state', () => {
   it('renders each history item as "a {symbol} b = result" with a delete button', () => {
     const items = [
-      makeItem({ id: 1, operation: 'add', a: 1, b: 2, result: 3 }),
-      makeItem({ id: 2, operation: 'mul', a: 4, b: 5, result: 20 }),
+      makeCalculationResponse({ id: 1, operation: 'add', a: 1, b: 2, result: 3 }),
+      makeCalculationResponse({ id: 2, operation: 'mul', a: 4, b: 5, result: 20 }),
     ];
 
     render(<History history={items} operationSymbol={operationSymbol} onDelete={vi.fn()} />);
@@ -67,8 +55,8 @@ describe('History - delete button', () => {
     const user = userEvent.setup();
     const onDelete = vi.fn();
     const items = [
-      makeItem({ id: 1, operation: 'add', a: 1, b: 2, result: 3 }),
-      makeItem({ id: 2, operation: 'sub', a: 9, b: 4, result: 5 }),
+      makeCalculationResponse({ id: 1, operation: 'add', a: 1, b: 2, result: 3 }),
+      makeCalculationResponse({ id: 2, operation: 'sub', a: 9, b: 4, result: 5 }),
     ];
 
     render(<History history={items} operationSymbol={operationSymbol} onDelete={onDelete} />);

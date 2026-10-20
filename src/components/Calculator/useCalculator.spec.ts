@@ -5,23 +5,11 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { useCalculator } from './useCalculator';
 import * as calculatorApi from '../../api/calculatorApi';
-import type { CalculationResponse } from '../../types/calculator';
+import { makeCalculationResponse } from '../../test-utils/fixtures';
 
 vi.mock('../../api/calculatorApi');
 
 const mockedApi = vi.mocked(calculatorApi);
-
-function makeHistoryItem(overrides: Partial<CalculationResponse> = {}): CalculationResponse {
-  return {
-    id: 1,
-    operation: 'add',
-    a: 1,
-    b: 2,
-    result: 3,
-    created_at: '2024-01-01T00:00:00Z',
-    ...overrides,
-  };
-}
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -31,7 +19,7 @@ beforeEach(() => {
 
 describe('useCalculator - initial mount', () => {
   it('loads history once on mount', async () => {
-    const items = [makeHistoryItem({ id: 1 }), makeHistoryItem({ id: 2 })];
+    const items = [makeCalculationResponse({ id: 1 }), makeCalculationResponse({ id: 2 })];
     mockedApi.getHistory.mockResolvedValue(items);
 
     const { result } = renderHook(() => useCalculator());
@@ -208,7 +196,7 @@ describe('useCalculator - operator chaining with intermediate backend call', () 
 describe('useCalculator - calculate', () => {
   it('calls the backend method matching the pending operator, updates the display, and refreshes history', async () => {
     mockedApi.multiply.mockResolvedValue({ result: 42 });
-    const historyAfter = [makeHistoryItem({ id: 7 })];
+    const historyAfter = [makeCalculationResponse({ id: 7 })];
     mockedApi.getHistory.mockResolvedValueOnce([]).mockResolvedValueOnce(historyAfter);
 
     const { result } = renderHook(() => useCalculator());
@@ -268,7 +256,7 @@ describe('useCalculator - error path', () => {
 
 describe('useCalculator - delete then refetch', () => {
   it('deletes the entry then reloads history', async () => {
-    const afterDelete = [makeHistoryItem({ id: 2 })];
+    const afterDelete = [makeCalculationResponse({ id: 2 })];
     mockedApi.getHistory.mockResolvedValueOnce([]).mockResolvedValueOnce(afterDelete);
     mockedApi.deleteCalculation.mockResolvedValue(undefined);
 
