@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
@@ -33,5 +34,15 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
+  },
+  test: {
+    // Vitest config for the React/Vite tree. Angular owns `src/app/**` (and
+    // has its own Karma-based `ng test` runner), so it's excluded here -
+    // Vitest should only ever see the React side of the migration.
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['src/test-setup.ts'],
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    exclude: ['src/app/**', 'node_modules/**', 'dist/**', 'dist-vite/**'],
   },
 });

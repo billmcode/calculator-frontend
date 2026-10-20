@@ -9,7 +9,7 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
-    "types": ["vite/client"],
+    "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -28,6 +28,13 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "include": ["src/main.tsx", "src/App.tsx", "src/components/**/*", "src/api/**/*", "src/types/**/*"],
+  "include": [
+    "src/main.tsx",
+    "src/App.tsx",
+    "src/components/**/*",
+    "src/api/**/*",
+    "src/types/**/*",
+    "src/test-setup.ts"
+  ],
   "exclude": ["src/app", "src/main.ts"]
 }

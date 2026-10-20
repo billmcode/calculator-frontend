@@ -26,4 +26,10 @@ export default tseslint.config(
       globals: globals.browser,
     },
   },
+  {
+    files: ['src/**/*.{test,spec}.{ts,tsx}', 'src/test-setup.ts'],
+    languageOptions: {
+      globals: globals.vitest,
+    },
+  },
 );
