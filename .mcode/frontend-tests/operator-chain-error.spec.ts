@@ -1,4 +1,5 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
+import { display, expression } from './helpers';
 
 // Operator chaining triggers an intermediate backend call
 // (POST /api/calculations) as soon as a second operator is pressed before
@@ -8,14 +9,6 @@ import { test, expect, type Page } from '@playwright/test';
 // successful calculation - see qa-report.md "Flow: Operator chaining ->
 // intermediate backend call -> graceful error". That error-path behavior
 // (visible banner, no crash, state preserved) is itself the thing under test.
-
-function display(page: Page) {
-  return page.locator('[class*="display"] [class*="result"]');
-}
-
-function expression(page: Page) {
-  return page.locator('[class*="display"] [class*="expression"]');
-}
 
 test.describe('Operator chaining and calculate (no backend present)', () => {
   test('chaining a second operator shows a graceful "Calculation failed" error, not a crash', async ({

@@ -1,14 +1,11 @@
 import { test, expect, type Page } from '@playwright/test';
+import { display, expression } from './helpers';
 
 // Digit entry / decimal / sign / percent / clear behavior, ported 1:1 from
 // Angular's useCalculator-equivalent logic (see useCalculator.ts). Steps and
 // expected display values come from qa-report.md's "Flow: Digit entry with
 // leading-zero replacement", "Flow: Decimal point entry", and "Flow: Sign
 // toggle (+/-) and percent (%)".
-
-function display(page: Page) {
-  return page.locator('[class*="display"] [class*="result"]');
-}
 
 function clickDigit(page: Page, digit: string) {
   return page.getByRole('button', { name: digit, exact: true }).click();
@@ -96,6 +93,6 @@ test.describe('Clear', () => {
 
     await page.getByRole('button', { name: 'C', exact: true }).click();
     await expect(display(page)).toHaveText('0');
-    await expect(page.locator('[class*="display"] [class*="expression"]')).toHaveText('');
+    await expect(expression(page)).toHaveText('');
   });
 });

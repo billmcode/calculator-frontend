@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { display } from './helpers';
 
 // Structural + visual rendering checks for the single-view calculator SPA.
 // Selectors avoid CSS-module hashed class names (unstable across builds) in
@@ -41,7 +42,7 @@ test.describe('Calculator rendering', () => {
     await page.goto('/');
 
     // Display area: expression line empty, result line showing "0".
-    const resultLine = page.locator('[class*="display"] [class*="result"]');
+    const resultLine = display(page);
     await expect(resultLine).toHaveText('0');
 
     // 19 keypad buttons total: C, +/-, %, ÷, 7 8 9 ×, 4 5 6 −, 1 2 3 +, 0 . =
