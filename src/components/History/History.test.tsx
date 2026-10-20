@@ -3,20 +3,30 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import History from './History';
+import type { HistoryProps } from './History';
 import { makeCalculationResponse } from '../../test-utils/fixtures';
 import { operationSymbol } from '../Calculator/useCalculator';
 
+function renderHistory(overrides: Partial<HistoryProps> = {}) {
+  const props: HistoryProps = {
+    history: [],
+    operationSymbol,
+    onDelete: vi.fn(),
+    ...overrides,
+  };
+  render(<History {...props} />);
+  return props;
+}
+
 describe('History - empty state', () => {
   it('renders "No calculations yet." when history is empty', () => {
-    render(<History history={[]} operationSymbol={operationSymbol} onDelete={vi.fn()} />);
+    renderHistory();
 
     expect(screen.getByText('No calculations yet.')).toBeInTheDocument();
   });
 
   it('does not render the empty message when history has items', () => {
-    render(
-      <History history={[makeCalculationResponse()]} operationSymbol={operationSymbol} onDelete={vi.fn()} />,
-    );
+    renderHistory({ history: [makeCalculationResponse()] });
 
     expect(screen.queryByText('No calculations yet.')).not.toBeInTheDocument();
   });
@@ -29,7 +39,7 @@ describe('History - populated state', () => {
       makeCalculationResponse({ id: 2, operation: 'mul', a: 4, b: 5, result: 20 }),
     ];
 
-    render(<History history={items} operationSymbol={operationSymbol} onDelete={vi.fn()} />);
+    renderHistory({ history: items });
 
     expect(screen.getByText('1 + 2 = 3')).toBeInTheDocument();
     expect(screen.getByText('4 × 5 = 20')).toBeInTheDocument();
@@ -43,13 +53,12 @@ describe('History - populated state', () => {
 describe('History - delete button', () => {
   it('invokes onDelete with the correct id when clicked', async () => {
     const user = userEvent.setup();
-    const onDelete = vi.fn();
     const items = [
       makeCalculationResponse({ id: 1, operation: 'add', a: 1, b: 2, result: 3 }),
       makeCalculationResponse({ id: 2, operation: 'sub', a: 9, b: 4, result: 5 }),
     ];
 
-    render(<History history={items} operationSymbol={operationSymbol} onDelete={onDelete} />);
+    const { onDelete } = renderHistory({ history: items });
 
     const deleteButtons = screen.getAllByTitle('Delete');
     await user.click(deleteButtons[1]);
