@@ -89,9 +89,14 @@ def frontend_health_check():
 # --------------------------------------------------------------------------
 
 
-def run_harness(command: str, *args: str) -> tuple[dict, int, float]:
+def run_harness(command: str, *args: str, base: str = VITE_BASE) -> tuple[dict, int, float]:
     """Invoke the Node harness, which imports and runs the real
     calculatorApi.ts module against the live Vite dev server + mock backend.
+
+    `base` is the origin the harness's wrapped `fetch` resolves leading-slash
+    paths against (`FT_VITE_BASE`). It defaults to the live Vite dev server;
+    tests that need to provoke a genuine fetch() *rejection* (as opposed to
+    an HTTP error response) point it at an address nothing is listening on.
 
     Returns (parsed_stdout_json, exit_code, duration_ms).
     """
@@ -102,7 +107,7 @@ def run_harness(command: str, *args: str) -> tuple[dict, int, float]:
         capture_output=True,
         text=True,
         timeout=30,
-        env={**os.environ, "FT_VITE_BASE": VITE_BASE},
+        env={**os.environ, "FT_VITE_BASE": base},
     )
     duration_ms = (time.monotonic() - start) * 1000
     assert result.stdout, f"harness produced no stdout; stderr={result.stderr}"
@@ -122,7 +127,7 @@ def record(**kwargs) -> None:
         "--repo-name",
         "calculator-frontend",
         "--test-run-index",
-        "1",
+        "2",
     ]
     for key, value in kwargs.items():
         if value is None:
@@ -409,6 +414,77 @@ class TestApiErrorFallback:
             method="DELETE",
             expected_status=500,
             actual_status=payload["status"],
+            actual_output=json.dumps(payload),
+            duration_ms=duration,
+        )
+
+
+# --------------------------------------------------------------------------
+# Network-level failure (safeFetch's fetch()-rejection path)
+# --------------------------------------------------------------------------
+
+
+class TestNetworkLevelFailure:
+    """Covers the new `safeFetch` wrapper added to calculatorApi.ts in this
+    code-review pass: a *rejected* `fetch()` (backend/transport unreachable -
+    as opposed to a resolved non-2xx `Response`, which is the ApiError
+    fallback path already covered above) must be caught and rethrown as
+    `ApiError(0, undefined)` rather than propagating a raw TypeError.
+
+    Every other test in this module points the harness's `fetch` at the live
+    Vite dev server (`FT_VITE_BASE`), which is always reachable even when the
+    *backend* 8000 is down (Vite's own proxy would then surface a resolved
+    502 Response, not a fetch() rejection - that's still the ApiError/
+    throwApiError path, not safeFetch's catch). To genuinely exercise
+    safeFetch's catch block with real (not mocked) `fetch()` semantics, we
+    point the harness at a closed TCP port that nothing listens on, so the
+    connection itself is refused at the socket layer before any HTTP
+    response is produced - a real network-level failure.
+    """
+
+    UNREACHABLE_BASE = "http://127.0.0.1:1"  # port 1 is reserved/unlisted; connection refused
+
+    def test_get_history_network_failure_surfaces_as_apierror_status_zero(self):
+        payload, exit_code, duration = run_harness("getHistory", base=self.UNREACHABLE_BASE)
+
+        assert exit_code == 1
+        assert payload["ok"] is False
+        assert payload["errorName"] == "ApiError"
+        assert payload["status"] == 0
+        assert payload.get("detail") is None
+        assert payload["message"] == "Calculation failed"
+
+        record(
+            name="test_gethistory_network_failure_apierror_status_zero",
+            category="INVALID_INPUT",
+            description="getHistory() with a genuinely unreachable backend (rejected fetch()) is caught by safeFetch and surfaced as ApiError(0, undefined), not a raw TypeError",
+            endpoint="/api/calculations",
+            method="GET",
+            expected_status=0,
+            actual_status=payload["status"],
+            actual_output=json.dumps(payload),
+            duration_ms=duration,
+        )
+
+    def test_add_network_failure_surfaces_as_apierror_status_zero(self):
+        payload, exit_code, duration = run_harness("add", "1", "1", base=self.UNREACHABLE_BASE)
+
+        assert exit_code == 1
+        assert payload["ok"] is False
+        assert payload["errorName"] == "ApiError"
+        assert payload["status"] == 0
+        assert payload.get("detail") is None
+        assert payload["message"] == "Calculation failed"
+
+        record(
+            name="test_add_network_failure_apierror_status_zero",
+            category="INVALID_INPUT",
+            description="add() with a genuinely unreachable backend (rejected fetch()) is caught by safeFetch and surfaced as ApiError(0, undefined), not a raw TypeError",
+            endpoint="/api/calculations",
+            method="POST",
+            expected_status=0,
+            actual_status=payload["status"],
+            request_body=json.dumps({"operation": "add", "a": 1.0, "b": 1.0}),
             actual_output=json.dumps(payload),
             duration_ms=duration,
         )
