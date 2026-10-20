@@ -3,13 +3,21 @@
 # Compiled output
 /dist
 /tmp
-/out-tsc
-/bazel-out
+.vite/
+*.local
 
 # Node
 /node_modules
 npm-debug.log
 yarn-error.log
+
+# Python (functional testing, added ahead of need)
+.venv/
+venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+*.pyo
 
 # IDEs and editors
 .idea/
@@ -26,17 +34,10 @@ yarn-error.log
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-!.vscode/mcp.json
 .history/*
 
 # Miscellaneous
-/.angular/cache
-.sass-cache/
-/connect.lock
 /coverage
-/libpeerconnection.log
-testem.log
-/typings
 __screenshots__/
 
 # System files

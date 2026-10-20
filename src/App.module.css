@@ -1,0 +1,12 @@
+/* Outer layout wrapper, ported from src/app/app.css's `.calculator-app`
+   rule - App-level, so it lives here rather than in a component's module. */
+
+.calculatorApp {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem;
+  min-height: 100vh;
+  box-sizing: border-box;
+}

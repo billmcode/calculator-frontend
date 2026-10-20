@@ -1,14 +1,5 @@
-.calculator-app {
-  display: flex;
-  gap: 2rem;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 2rem;
-  min-height: 100vh;
-  box-sizing: border-box;
-}
+/* Ported from src/app/app.css (calculator-related rules only). */
 
-/* Calculator */
 .calculator {
   background: #1c1c1e;
   border-radius: 16px;
@@ -121,64 +112,4 @@
   color: #ff453a;
   font-size: 0.85rem;
   text-align: center;
-}
-
-/* History Panel */
-.history-panel {
-  background: #1c1c1e;
-  border-radius: 16px;
-  padding: 1.5rem;
-  width: 300px;
-  max-height: 520px;
-  overflow-y: auto;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-}
-
-.history-panel h2 {
-  margin: 0 0 1rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #fff;
-}
-
-.history-panel .empty {
-  color: #8e8e93;
-  font-size: 0.9rem;
-}
-
-.history-panel ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.history-panel li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.6rem 0;
-  border-bottom: 1px solid #2c2c2e;
-}
-
-.history-panel li:last-child {
-  border-bottom: none;
-}
-
-.calc-text {
-  color: #e5e5ea;
-  font-size: 0.9rem;
-}
-
-.delete-btn {
-  background: none;
-  border: none;
-  color: #ff453a;
-  font-size: 1.25rem;
-  cursor: pointer;
-  padding: 0 0.25rem;
-  line-height: 1;
-}
-
-.delete-btn:hover {
-  color: #ff6961;
 }
