@@ -3,11 +3,6 @@
 # Compiled output
 /dist
 /tmp
-/out-tsc
-/bazel-out
-
-# Vite (React migration, scaffolded alongside Angular)
-/dist-vite
 .vite/
 *.local
 
@@ -39,17 +34,10 @@ __pycache__/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-!.vscode/mcp.json
 .history/*
 
 # Miscellaneous
-/.angular/cache
-.sass-cache/
-/connect.lock
 /coverage
-/libpeerconnection.log
-testem.log
-/typings
 __screenshots__/
 
 # System files

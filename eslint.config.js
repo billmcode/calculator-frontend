@@ -1,8 +1,4 @@
-// ESLint 9 flat config for the Vite/React/TypeScript tree.
-//
-// Angular owns `src/app/**` (and will be deleted entirely once the final
-// cutover task runs), so it is excluded here rather than linted with
-// React-specific rules that don't apply to Angular components/decorators.
+// ESLint 9 flat config for the Vite/React/TypeScript app.
 import js from '@eslint/js';
 import globals from 'globals';
 import reactHooks from 'eslint-plugin-react-hooks';
@@ -11,7 +7,7 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['dist', 'dist-vite', 'src/app/**'],
+    ignores: ['dist'],
   },
   {
     files: ['src/**/*.{ts,tsx}'],
